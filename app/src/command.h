@@ -80,6 +80,9 @@ adb_push(const char *serial, const char *local, const char *remote);
 process_t
 adb_install(const char *serial, const char *local);
 
+bool
+adb_get_settings(const char *serial, const char *table, const char *key, char *value, int len);
+
 // convenience function to wait for a successful process execution
 // automatically log process errors with the provided process name
 bool

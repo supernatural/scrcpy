@@ -169,6 +169,10 @@ public final class Device {
         return serviceManager.getInputManager().injectInputEvent(inputEvent, mode);
     }
 
+    public boolean injectText(String text) {
+        return serviceManager.getInputManager().injectText(text);
+    }
+
     public boolean injectEvent(InputEvent event) {
         return injectEvent(event, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }

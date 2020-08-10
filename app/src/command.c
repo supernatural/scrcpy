@@ -229,3 +229,38 @@ process_check_success(process_t proc, const char *name) {
     }
     return true;
 }
+
+bool adb_get_settings(const char *serial, const char *table, const char *key, char *value, int len) {
+    FILE *fp = NULL;
+    char cmd[256];
+    bool ret = true;
+
+    if (serial)
+        snprintf(cmd, sizeof(cmd), "adb -s '%s' shell settings get '%s' '%s'", serial, table, key);
+    else
+        snprintf(cmd, sizeof(cmd), "adb shell settings get '%s' '%s'", table, key);
+
+#ifdef __WINDOWS__
+    fp = _popen(cmd, "rt");
+#else
+    fp = popen(cmd, "r");
+#endif
+
+    if (fp == NULL) {
+        LOGE("get settings of key %s from table %s failed", key, table);
+        return false;
+    }
+
+    if (!fgets(value, len, fp)) {
+        LOGE("read settings of key %s from table %s failed", key, table);
+        ret = false;
+    }
+
+#ifdef __WINDOWS__
+    _pclose(fp);
+#else
+    pclose(fp);
+#endif
+
+    return ret;
+}

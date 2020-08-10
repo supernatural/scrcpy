@@ -1,5 +1,9 @@
 package com.genymobile.scrcpy;
 
+import com.genymobile.scrcpy.wrappers.InputManager;
+
+import android.content.Intent;
+import com.genymobile.scrcpy.Point;
 import android.os.Build;
 import android.os.SystemClock;
 import android.view.InputDevice;
@@ -161,6 +165,12 @@ public class Controller {
 
     private int injectText(String text) {
         int successCount = 0;
+        for (char c : text.toCharArray()) {
+            if (c > 255) {
+                return device.injectText(text) ? text.length() : 0;
+            }
+        }
+
         for (char c : text.toCharArray()) {
             if (!injectChar(c)) {
                 Ln.w("Could not inject char u+" + String.format("%04x", (int) c));

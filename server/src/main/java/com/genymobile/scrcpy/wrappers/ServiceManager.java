@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.os.IBinder;
 import android.os.IInterface;
 
+import com.genymobile.scrcpy.Ln;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @SuppressLint("PrivateApi,DiscouragedPrivateApi")
@@ -57,6 +60,29 @@ public final class ServiceManager {
     public InputManager getInputManager() {
         if (inputManager == null) {
             inputManager = new InputManager(getService("input", "android.hardware.input.IInputManager"));
+            try {
+                Method an = Class.forName("android.app.ActivityManagerNative").getDeclaredMethod("getDefault");
+                IInterface am = (IInterface)an.invoke(null);
+                Method[] methods = am.getClass().getMethods();
+                Method broadcastIntent = null;
+
+                for (Method m : methods) {
+                    if (m.getName().equals("broadcastIntent")) {
+                        broadcastIntent = m;
+                        break;
+                    }
+                }
+
+                inputManager.setAm(am, broadcastIntent);
+            } catch (ClassNotFoundException e) {
+                Ln.d("ClassNotFound " + e);
+            } catch (NoSuchMethodException e) {
+                Ln.d("MethodNotFound " + e);
+            } catch (IllegalAccessException e) {
+                Ln.d("IllegalAccess " + e);
+            } catch (InvocationTargetException e) {
+                Ln.d("InvocationTarget "  + e);
+            }
         }
         return inputManager;
     }

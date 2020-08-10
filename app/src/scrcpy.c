@@ -266,6 +266,14 @@ event_loop(const struct scrcpy_options *options) {
     return false;
 }
 
+static void set_inputmethod(const char *serial, const char *input_method) {
+    const char *const adb_cmd[] = {
+        "shell", "ime", "set", input_method
+    };
+
+    process_check_success(adb_execute(serial, adb_cmd, ARRAY_LEN(adb_cmd)), "input_method");
+}
+
 static SDL_LogPriority
 sdl_priority_from_av_level(int level) {
     switch (level) {
